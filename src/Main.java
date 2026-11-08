@@ -17,7 +17,12 @@ public class Main {
 
         System.out.println();
 
-        Vector vector_norm = Vector.normalize(vector_sum);
+        for(int i = 0; i < vector_2.coords_count(); i++){
+            System.out.print(vector_2.get_coord(i));
+            System.out.print(", ");
+        }
+
+        System.out.println();
 
         for(int i = 0; i < vector_sum.coords_count(); i++){
             System.out.print(vector_sum.get_coord(i));
@@ -26,9 +31,8 @@ public class Main {
 
         System.out.println();
 
-        for(int i = 0; i < vector_norm.coords_count(); i++){
-            System.out.print(vector_norm.get_coord(i));
-            System.out.print(", ");
-        }
+        double scal = Vector.scalar_multiplication_of_vectors(vector_2, vector_sum);
+
+        System.out.println(scal);
     }
 }
