@@ -1,5 +1,7 @@
 package Math;
 
+import java.text.DecimalFormat;
+
 import static java.lang.Math.*;
 
 public class Vector {
@@ -22,12 +24,12 @@ public class Vector {
     }
 
     public Vector(Vector vector) {
-        coordinates = vector.get_coords_array().clone();
+        coordinates = vector.get_array().clone();
     }
 
     public void multiply_vector_on_const(double value){
-        for(int i = 0; i < coords_count(); i++){
-            multiply_coord(i, value);
+        for(int i = 0; i < size(); i++){
+            multiply_value(i, value);
         }
     }
 
@@ -40,14 +42,14 @@ public class Vector {
     }
 
     public void add_vector(Vector vector){
-        for(int i = 0; i < min(coords_count(), vector.coords_count()); i++){
-            add_to_coord(i, vector.get_coord(i));
+        for(int i = 0; i < min(size(), vector.size()); i++){
+            add_to_value(i, vector.get_value(i));
         }
     }
 
     public void subtract_vector(Vector vector){
-        for(int i = 0; i < min(coords_count(), vector.coords_count()); i++){
-            add_to_coord(i, -1 * vector.get_coord(i));
+        for(int i = 0; i < min(size(), vector.size()); i++){
+            add_to_value(i, -1 * vector.get_value(i));
         }
     }
 
@@ -64,28 +66,28 @@ public class Vector {
     }
 
     public static Vector sum_of_vectors(Vector Vector_1, Vector Vector_2){
-        Vector Vector_sum = new Vector(max(Vector_1.coords_count(), Vector_2.coords_count()));
+        Vector Vector_sum = new Vector(max(Vector_1.size(), Vector_2.size()));
 
-        for(int i = 0; i < Vector_1.coords_count(); i++){
-            Vector_sum.add_to_coord(i, Vector_1.get_coord(i));
+        for(int i = 0; i < Vector_1.size(); i++){
+            Vector_sum.add_to_value(i, Vector_1.get_value(i));
         }
 
-        for(int i = 0; i < Vector_2.coords_count(); i++){
-            Vector_sum.add_to_coord(i, Vector_2.get_coord(i));
+        for(int i = 0; i < Vector_2.size(); i++){
+            Vector_sum.add_to_value(i, Vector_2.get_value(i));
         }
 
         return Vector_sum;
     }
 
     public static Vector dif_of_vectors(Vector Vector_1, Vector Vector_2){
-        Vector Vector_sum = new Vector(max(Vector_1.coords_count(), Vector_2.coords_count()));
+        Vector Vector_sum = new Vector(max(Vector_1.size(), Vector_2.size()));
 
-        for(int i = 0; i < Vector_1.coords_count(); i++){
-            Vector_sum.add_to_coord(i, Vector_1.get_coord(i));
+        for(int i = 0; i < Vector_1.size(); i++){
+            Vector_sum.add_to_value(i, Vector_1.get_value(i));
         }
 
-        for(int i = 0; i < Vector_2.coords_count(); i++){
-            Vector_sum.add_to_coord(i, -1 * Vector_2.get_coord(i));
+        for(int i = 0; i < Vector_2.size(); i++){
+            Vector_sum.add_to_value(i, -1 * Vector_2.get_value(i));
         }
 
         return Vector_sum;
@@ -98,48 +100,59 @@ public class Vector {
             throw new IllegalArgumentException("Нулевой вектор нельзя нормализовать");
         }
 
-        Vector vector_normalized = new Vector(vector.coords_count());
+        Vector vector_normalized = new Vector(vector.size());
 
-        for (int i = 0; i < vector.coords_count(); i++){
-            double coord_normalized = vector.get_coord(i) / length;
-            vector_normalized.set_coord(i, coord_normalized);
+        for (int i = 0; i < vector.size(); i++){
+            double coord_normalized = vector.get_value(i) / length;
+            vector_normalized.set_value(i, coord_normalized);
         }
 
         return vector_normalized;
     }
 
     public static double scalar_multiplication_of_vectors(Vector vector_1, Vector vector_2){
-        if (vector_1.coords_count() != vector_2.coords_count()) {
+        if (vector_1.size() != vector_2.size()) {
             throw new IllegalArgumentException("Векторы разной длинны");
         }
 
         double sum = 0;
 
-        for(int i = 0; i < vector_1.coords_count(); i++){
-            sum += vector_1.get_coord(i) * vector_2.get_coord(i);
+        for(int i = 0; i < vector_1.size(); i++){
+            sum += vector_1.get_value(i) * vector_2.get_value(i);
         }
 
         return sum;
     }
 
     public static Vector vector_multiplication_of_vectors(Vector vector_1, Vector vector_2){
-        if (vector_1.coords_count() != 3 || vector_2.coords_count() != 3) {
+        if (vector_1.size() != 3 || vector_2.size() != 3) {
             throw new IllegalArgumentException("Векторы не трёхмерные");
         }
 
-        return vector_1;    //Заглушка
+        Vector vector_out = new Vector(3);
+
+        double temp = vector_1.get_value(1) * vector_2.get_value(2) - vector_1.get_value(2) * vector_2.get_value(1);
+        vector_out.set_value(0, temp);
+
+        temp = vector_1.get_value(2) * vector_2.get_value(0) - vector_1.get_value(0) * vector_2.get_value(2);
+        vector_out.set_value(1, temp);
+
+        temp = vector_1.get_value(0) * vector_2.get_value(1) - vector_1.get_value(1) * vector_2.get_value(0);
+        vector_out.set_value(2, temp);
+
+        return vector_out;    //Заглушка
     }
 
 
-    public void add_to_coord(int coord, double value){
+    public void add_to_value(int coord, double value){
         coordinates[coord] += value;
     }
 
-    public void multiply_coord(int coord, double value){
+    public void multiply_value(int coord, double value){
         coordinates[coord] *= value;
     }
 
-    public void set_coord(int coord, double value){
+    public void set_value(int coord, double value){
         coordinates[coord] = value;
     }
 
@@ -151,15 +164,27 @@ public class Vector {
         return sqrt(sqrt_sum);
     }
 
-    public int coords_count(){
+    public int size(){
         return coordinates.length;
     }
 
-    public double get_coord(int i){
+    public double get_value(int i){
         return coordinates[i];
     }
 
-    public double[] get_coords_array(){
+    public double[] get_array(){
         return coordinates;
+    }
+
+    public void print(){
+        DecimalFormat df = new DecimalFormat("#.##");
+
+        System.out.print("{");
+        for(int i = 0; i < size() - 1; i++){
+            System.out.print(df.format(get_value(i)));
+            System.out.print(", ");
+        }
+        System.out.print(df.format(get_value(size() - 1)));
+        System.out.println("}");
     }
 }
